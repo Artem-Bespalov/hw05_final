@@ -177,7 +177,7 @@ class PostViewTests(TestCase):
                                       description='Тестовое описание2')
         posts_count = Post.objects.filter(group=self.group).count()
         post = Post.objects.create(
-            text='Тестовый пост другого автора',
+            text=self.post.text,
             author=self.user2,
             group=group2)
         response_profile = self.authorized_client.get(

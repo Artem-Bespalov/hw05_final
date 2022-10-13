@@ -31,7 +31,7 @@
   {% endthumbnail %}
   <article class="col-12 col-md-9">
     <p>{{ post }}</p>
-  {% if user.username == post.author.username %}
+  {% if request.user == post.author %}
     <a class="btn btn-primary" href="{% url 'posts:post_edit' post.id %}">
       Редактировать запись
     </a>

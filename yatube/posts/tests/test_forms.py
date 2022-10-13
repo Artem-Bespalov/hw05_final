@@ -63,7 +63,7 @@ class PostFormTests(TestCase):
             content_type='image/gif'
         )
         form_data = {
-            'group': PostFormTests.group.id,
+            'group': self.group.id,
             'text': 'Тестовый текст',
             'image': uploaded,
         }
@@ -84,7 +84,7 @@ class PostFormTests(TestCase):
         self.assertTrue(
             Post.objects.filter(
                 group=self.group.id,
-                text='Тестовый пост',
+                text=self.post.text,
                 image=self.post.image,
             ).exists()
         )
@@ -111,7 +111,7 @@ class PostFormTests(TestCase):
         first_post = Post.objects.first()
         self.assertEqual(
             first_post.text,
-            'Тестовый текст'
+            form_data["text"]
         )
         self.assertEqual(
             first_post.group.title,

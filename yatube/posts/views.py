@@ -8,40 +8,41 @@ from .utils import get_page_context
 
 def index(request):
     posts = Post.objects.select_related('group')
-    context = get_page_context(posts, request)
+    page_obj = get_page_context(posts, request)
+    context = {'page_obj': page_obj, }
     return render(request, 'posts/index.html', context)
 
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     posts = group.posts.select_related('group')
-    all_post = group.posts.all()
+    page_obj = get_page_context(group.posts.all(), request)
     context = {
         'group': group,
         'posts': posts,
+        'page_obj': page_obj,
     }
-    context.update(get_page_context(all_post, request))
     return render(request, 'posts/group_list.html', context)
 
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    posts = Post.objects.filter(author=author)
-    all_author = author.posts.all()
+    posts = Post.objects.filter(author__username=username)
     following = Follow.objects.filter(user__username=request.user,
                                       author=author)
+    page_obj = get_page_context(author.posts.all(), request)
     context = {
         'author': author,
         'posts': posts,
         'following': following,
+        'page_obj': page_obj,
     }
-    context.update(get_page_context(all_author, request))
     return render(request, 'posts/profile.html', context)
 
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    comments = Comment.objects.filter(post=post.id)
+    comments = Comment.objects.filter(post__id=post.id)
     form = CommentForm()
     context = {
         'post': post,
@@ -66,7 +67,7 @@ def post_create(request):
 def post_edit(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if request.user != post.author:
-        return redirect("posts:post_detail", post_id)
+        return redirect('posts:post_detail', post_id)
     form = PostForm(
         request.POST or None,
         files=request.FILES or None,
@@ -75,7 +76,7 @@ def post_edit(request, post_id):
     if form.is_valid():
         form.save()
         return redirect('posts:post_detail', post_id=post.pk)
-    context = {"form": form, "is_edit": True, 'post': post}
+    context = {'form': form, 'is_edit': True, 'post': post}
     return render(request, 'posts/create_post.html', context)
 
 
@@ -94,22 +95,23 @@ def add_comment(request, post_id):
 @login_required
 def follow_index(request):
     posts = Post.objects.filter(author__following__user=request.user)
-    context = get_page_context(posts, request)
+    page_obj = get_page_context(posts, request)
+    context = {'page_obj': page_obj, }
     return render(request, 'posts/follow.html', context)
 
 
 @login_required
-def profile_follow(request, username: str):
+def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    user = request.user
-    if author != user:
-        Follow.objects.get_or_create(user=user, author=author)
-    return redirect("posts:profile", username=username)
+    if author != request.user:
+        Follow.objects.get_or_create(user=request.user, author=author)
+    return redirect('posts:profile', username=username)
 
 
 @login_required
-def profile_unfollow(request, username: str):
-    user = request.user
-    follow = get_object_or_404(Follow, user=user, author__username=username)
-    follow.delete()
-    return redirect("posts:profile", username=username)
+def profile_unfollow(request, username):
+    Follow.objects.filter(
+        user=request.user,
+        author__username=username
+    ).delete()
+    return redirect('posts:profile', username=username)

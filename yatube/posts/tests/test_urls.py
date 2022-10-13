@@ -102,7 +102,7 @@ class PostURLTests(TestCase):
     def test_page404_correct_template(self):
         """Страница 404 отдаёт кастомный шаблон"""
         template_url_name = {
-            'core/404.html': '/qwerty/',
+            'core/404.html': '/unexisting_page/',
         }
         for template, address in template_url_name.items():
             with self.subTest(address=address):

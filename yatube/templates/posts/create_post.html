@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load user_filters %}
 {% load thumbnail %}
 {% block title %}
 {% if is_edit %}Редактировать запись{% else %}Добавить запись{% endif %}
@@ -12,28 +13,20 @@
         <div class="card-body">
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group row my-3 p-3">
-              <label for="id_text">
-              Текст поста:                 
-              <span class="required text-danger" >*</span>                
-              </label>
-              {{ form.text }}
-            </div>
-            <div class="form-group row my-3 p-3">
-              <label for="id_group">
-              Группа:                 
-              </label>
-              {{ form.group }}
-              <small id="id_group-help" class="form-text text-muted">
-              Группа, к которой будет относиться пост
-              </small>
-            </div>
-            <div class="form-group row my-3 p-3">
-              <label for="id_image">
-                Изображение:                      
-              </label>
-              <input type="file" name="image" accept="image/*" class="form-control" id="id_image">                      
-            </div>
+            {% for field in form %}
+              <div class="form-group row my-3 p-3">
+                <label for="{{ field.id_for_label }}">
+                  {{ field.label }}
+                </label>  
+                {{ field|addclass:'form-control' }}
+                {% if field.help_text %}
+                  <small id="{{ field.id_for_label }}-help"
+                         class="form-text text-muted">
+                    {{ field.help_text|safe }}
+                  </small>
+                {% endif %}
+              </div>
+            {% endfor %}
             <div class="d-flex justify-content-end">
               <button type="submit" class="btn btn-primary">
               Сохранить
