@@ -1,9 +1,9 @@
 ### Проект социальной сети YaTube:
-Проект социальной сети, с возможностью публикации постов, подпиской на группы и авторов, а также комментированием постов.
+Проект социальной сети, с возможностью публикации постов, подпиской на группы и авторов, а также комментированием постов. Также реализована возможность регистрации и авторизации пользователей.
 ### Стек технологий:
 ![python version](https://img.shields.io/badge/Python-3.7.9-green)
 ![django version](https://img.shields.io/badge/Django-2.2.16-green)
-![Html](https://img.shields.io/badge/Html-green)
+![Html](https://img.shields.io/badge/HTML-green)
 ![CSS](https://img.shields.io/badge/CSS-green)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-green)
 ### Запуск проекта в dev-режиме:
@@ -30,3 +30,14 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
+### Примеры запросов:
+
+* ```posts/{id}``` - Получение, изменение или удаление поста(GET, PUT, PATCH, DELETE)
+* ```posts/{post_id}/comments/``` - Получение комментариев к посту(GET)
+* ```posts/{post_id}/comments/{id}``` - Получение, изменение или удаление комментария(GET, PUT, PATCH, DELETE)
+* ```group/{slug:slug}``` - Подробная информация о группе(GET)
+* ```profile/{usermane}/``` - Профайл пользователя(GET)
+* ```follow/``` - Получение избранных авторов(GET)
+
+### Автор:
+<a href="https://github.com/Artem-Bespalov">Артем Беспалов</a>
